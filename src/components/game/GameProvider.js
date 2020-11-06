@@ -4,7 +4,10 @@ export const GameContext = React.createContext();
 
 export const GameProvider = (props) => {
     const [games, setGames] = useState([]);
-    const [game, setGame] = useState({
+    const [categories, setCategories] = useState([]);
+
+    const [game, setGame] = useState(
+        {
         gamer: {
             user: {}
         }
@@ -30,10 +33,32 @@ export const GameProvider = (props) => {
                 .then(setGame)
     };
 
+    const createGame = (game) => {
+        return fetch("http://localhost:8000/games", {
+            method: "POST",
+            headers:{
+                "Authorization": `Token ${localStorage.getItem("rare_token")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(game)
+        })
+            .then(getAllGames)
+    };
+
+    const getCategories = () => {
+        return fetch("http://localhost:8000/categories", {
+            headers:{
+                "Authorization": `Token ${localStorage.getItem("rare_token")}`
+            }
+        })
+            .then(r => r.json())
+                .then(setCategories)
+    };
+
     return (
         <GameContext.Provider
             value={{
-                games, getAllGames, getSingleGame, game
+                games, getAllGames, getSingleGame, game, categories, getCategories, createGame
             }}
         >
             {props.children}
