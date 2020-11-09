@@ -33,7 +33,7 @@ export const GameProvider = (props) => {
                 .then(setGame)
     };
 
-    const createGame = (game) => {
+    const createGame = (game, category) => {
         return fetch("http://localhost:8000/games", {
             method: "POST",
             headers:{
@@ -42,7 +42,14 @@ export const GameProvider = (props) => {
             },
             body: JSON.stringify(game)
         })
-            .then(getAllGames)
+            .then((res) => fetch("http://localhost:8000/gamecategory", {
+                method: "POST",
+                headers:{
+                    "Authorization": `Token ${localStorage.getItem("rare_token")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({game_id: res.id, category_id: category})
+            }))
     };
 
     const getCategories = () => {
